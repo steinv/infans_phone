@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class MessageModel {
   final String id;
   final String body;
@@ -7,7 +9,12 @@ class MessageModel {
 
   MessageModel(this.id, this.body, this.from, this.to, this.timestamp);
 
-  factory MessageModel.fromJson(String id, Map<String, dynamic> json) {
+  String timeStampAsString(String? format) {
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    return DateFormat(format ?? 'dd-MM-yyyy hh:mm:ss').format(dateTime);
+  }
+
+  factory MessageModel.fromJson(String id, Map json) {
     return MessageModel(
       id,
       json['Body'] as String,
@@ -17,3 +24,4 @@ class MessageModel {
     );
   }
 }
+

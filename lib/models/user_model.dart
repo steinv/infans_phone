@@ -6,12 +6,12 @@ class UserModel {
   final List<String>? appointments;
   final String? email;
   final String? name;
-  final String? phonenumber;
+  final String? phoneNumber;
   final String? photoURL;
-  final String? stripe_id;
+  final String? stripeId;
   final String? surname;
 
-  UserModel(this.id, this.address, this.agreeTermsAndConditions, this.appointments, this.email, this.name, this.phonenumber, this.photoURL, this.stripe_id, this.surname);
+  UserModel(this.id, this.address, this.agreeTermsAndConditions, this.appointments, this.email, this.name, this.phoneNumber, this.photoURL, this.stripeId, this.surname);
 
   factory UserModel.fromJson(String id, Map<String, dynamic> json) {
     return UserModel(

@@ -39,7 +39,7 @@ class InfansPhoneAppHomeState extends State<InfansPhoneAppHome> with SingleTicke
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Infans Phone"),
+        title: const Text("Infans Phone"),
         elevation: 0.7,
         bottom: TabBar(
           controller: _tabController,
@@ -49,7 +49,7 @@ class InfansPhoneAppHomeState extends State<InfansPhoneAppHome> with SingleTicke
       ),
       body: TabBarView(
         controller: _tabController,
-        children: <Widget>[
+        children: const <Widget>[
           ChatScreen(),
           CallsScreen(),
           ContactScreen(),

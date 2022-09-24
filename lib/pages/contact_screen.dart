@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 
 class ContactScreen extends StatefulWidget {
+  const ContactScreen({super.key});
+
   @override
   State<StatefulWidget> createState() {
     return ContactScreenState();
@@ -33,7 +35,7 @@ class ContactScreenState extends State<ContactScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xfff2f2f2),
+      color: const Color(0xfff2f2f2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -67,10 +69,10 @@ class ContactScreenState extends State<ContactScreen> {
   }
 
   ImageProvider profilePicture(String? photoURL) {
-    if (photoURL == null || photoURL!.isEmpty) {
+    if (photoURL == null || photoURL.isEmpty) {
       return const AssetImage('images/default-user.png');
     } else {
-      return NetworkImage(photoURL!);
+      return NetworkImage(photoURL);
     }
   }
 }

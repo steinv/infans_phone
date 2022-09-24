@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/chat_model.dart';
 
 class ChatScreen extends StatefulWidget {
+  const ChatScreen({super.key});
+
   @override
   ChatScreenState createState() {
     return ChatScreenState();

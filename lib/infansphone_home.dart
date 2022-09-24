@@ -7,10 +7,16 @@ class InfansPhoneAppHome extends StatefulWidget {
   const InfansPhoneAppHome({super.key});
 
   @override
-  _InfansPhoneAppHomeState createState() => _InfansPhoneAppHomeState();
+  InfansPhoneAppHomeState createState() => InfansPhoneAppHomeState();
 }
 
-class _InfansPhoneAppHomeState extends State<InfansPhoneAppHome> with SingleTickerProviderStateMixin {
+class InfansPhoneAppHomeState extends State<InfansPhoneAppHome> with SingleTickerProviderStateMixin {
+  static const tabs = <Widget>[
+    Tab(text: "CHATS"),
+    Tab(text: "CALLS"),
+    Tab(text: "CONTACTS"),
+  ];
+
   late TabController _tabController;
   bool showFab = true;
 
@@ -18,7 +24,7 @@ class _InfansPhoneAppHomeState extends State<InfansPhoneAppHome> with SingleTick
   void initState() {
     super.initState();
 
-    _tabController = TabController(vsync: this, initialIndex: 0, length: 3);
+    _tabController = TabController(vsync: this, initialIndex: 0, length: tabs.length);
     _tabController.addListener(() {
       if (_tabController.index == 0) {
         showFab = true;
@@ -38,19 +44,8 @@ class _InfansPhoneAppHomeState extends State<InfansPhoneAppHome> with SingleTick
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
-          tabs: const <Widget>[
-            Tab(text: "CHATS"),
-            Tab(text: "CALLS"),
-            Tab(text: "CONTACTS"),
-          ],
+          tabs: tabs,
         ),
-        /*actions: const <Widget>[
-          Icon(Icons.search),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5.0),
-          ),
-          Icon(Icons.more_vert)
-        ],*/
       ),
       body: TabBarView(
         controller: _tabController,

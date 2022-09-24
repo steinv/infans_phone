@@ -31,7 +31,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlutterLogin(
       title: 'Infans',
-      logo: const AssetImage('assets/images/infans.png'),
+      logo: const AssetImage('images/infans.png'),
       messages: LoginMessages(
         userHint: 'E-mail',
         passwordHint: 'Wachtwoord',

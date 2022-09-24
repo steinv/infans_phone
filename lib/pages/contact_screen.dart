@@ -21,7 +21,7 @@ class ContactScreenState extends State<ContactScreen> {
   void initState() {
     super.initState();
 
-    FirebaseDatabase.instance.ref('users').orderByChild('name').onValue.listen((event) {
+    FirebaseDatabase.instance.ref('users').onValue.listen((event) {
       // TODO figure out a way that's less heavy than jsonDecode(jsonEncode()) to convert
       final data = jsonDecode(jsonEncode(event.snapshot.value));
       List<UserModel> usersWithName = data.entries
@@ -29,7 +29,7 @@ class ContactScreenState extends State<ContactScreen> {
           .where((element) => element.name != null)
           .toList()
           .cast<UserModel>();
-      usersWithName.sort((x, y) => '${x.name!} ${x.surname ?? ""}'.compareTo('${y.name!} ${y.surname ?? ""}'));
+      usersWithName.sort((x, y) => x.getFullName().compareTo(y.getFullName()));
 
       setState(() {
         contacts = usersWithName;
@@ -52,10 +52,10 @@ class ContactScreenState extends State<ContactScreen> {
                 children: contacts.map((contact) => ListTile(
                           leading: CircleAvatar(
                             radius: 30,
-                            backgroundImage: profilePicture(contact.photoURL),
+                            backgroundImage: contact.profilePicture(),
                           ),
                           title: Text(
-                            '${contact.name!} ${contact.surname?? ""}',
+                            contact.getFullName(),
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(contact.email ?? ""),
@@ -71,13 +71,5 @@ class ContactScreenState extends State<ContactScreen> {
         ],
       ),
     );
-  }
-
-  ImageProvider profilePicture(String? photoURL) {
-    if (photoURL == null || photoURL.isEmpty) {
-      return const AssetImage('assets/images/default-user.png');
-    } else {
-      return NetworkImage(photoURL);
-    }
   }
 }

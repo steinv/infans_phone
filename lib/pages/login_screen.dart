@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
-import 'package:infans_phone/models/user_secure_storage.dart';
 import '../infansphone_home.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -11,27 +10,19 @@ class LoginScreen extends StatelessWidget {
     debugPrint('Email: ${data.name}, Password: ${data.password}');
     return FirebaseAuth.instance
         .signInWithEmailAndPassword(email: data.name, password: data.password)
-        .then(
-            (userCredential) {
-              return UserSecureStorage.setAuthenticated(
-                  userCredential.credential?.token?.toString())
-                  .then((_) => null);
-            },
-            onError: (error) => error.toString());
+        .then((_) => null, onError: (error) => error.toString());
   }
 
   Future<String> _recoverPassword(String name) {
     debugPrint('Email: $name');
-    return FirebaseAuth.instance
-        .sendPasswordResetEmail(email: name)
-        .then((r) => 'Check uw e-mail');
+    return FirebaseAuth.instance.sendPasswordResetEmail(email: name).then((r) => 'Check uw e-mail');
   }
 
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
       title: 'Infans',
-      logo: const AssetImage('images/infans.png'),
+      logo: const AssetImage('assets/images/infans.png'),
       messages: LoginMessages(
         userHint: 'E-mail',
         passwordHint: 'Wachtwoord',

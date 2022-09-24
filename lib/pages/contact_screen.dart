@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
@@ -13,18 +15,21 @@ class ContactScreen extends StatefulWidget {
 }
 
 class ContactScreenState extends State<ContactScreen> {
-  Iterable<UserModel> contacts = List.empty();
+  List<UserModel> contacts = List.empty();
 
   @override
   void initState() {
     super.initState();
 
     FirebaseDatabase.instance.ref('users').orderByChild('name').onValue.listen((event) {
-      final data = event.snapshot.value as Map<String, dynamic>;
-      var usersWithName = data.entries
-          .map((entry) => UserModel.fromJson(entry.key, entry.value as Map<String, dynamic>))
-          .where((element) => element.name != null);
-          // .sort((x, y) => Intl.Collator().compare(x.name + x.surname, y.name + y.surname)))
+      // TODO figure out a way that's less heavy than jsonDecode(jsonEncode()) to convert
+      final data = jsonDecode(jsonEncode(event.snapshot.value));
+      List<UserModel> usersWithName = data.entries
+          .map((entry) => UserModel.fromJson(entry.key, entry.value))
+          .where((element) => element.name != null)
+          .toList()
+          .cast<UserModel>();
+      usersWithName.sort((x, y) => '${x.name!} ${x.surname ?? ""}'.compareTo('${y.name!} ${y.surname ?? ""}'));
 
       setState(() {
         contacts = usersWithName;
@@ -70,7 +75,7 @@ class ContactScreenState extends State<ContactScreen> {
 
   ImageProvider profilePicture(String? photoURL) {
     if (photoURL == null || photoURL.isEmpty) {
-      return const AssetImage('images/default-user.png');
+      return const AssetImage('assets/images/default-user.png');
     } else {
       return NetworkImage(photoURL);
     }

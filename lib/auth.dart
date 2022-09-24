@@ -1,5 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:infans_phone/models/user_secure_storage.dart';
 import 'package:infans_phone/pages/login_screen.dart';
 
 import 'infansphone_home.dart';
@@ -10,12 +10,8 @@ class AuthWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: UserSecureStorage.isAuthenticated(),
-        builder:
-            (BuildContext context, AsyncSnapshot<bool> authenticated) =>
-                true == authenticated.data
-                    ? const InfansPhoneAppHome()
-                    : const LoginScreen()
-    );
+        future: FirebaseAuth.instance.authStateChanges().first,
+        builder: (BuildContext context, AsyncSnapshot<User?> currentUser) =>
+            currentUser.data != null ? const InfansPhoneAppHome() : const LoginScreen());
   }
 }

@@ -11,7 +11,7 @@ class MessageModel {
 
   String timeStampAsString(String? format) {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    return DateFormat(format ?? 'dd-MM-yyyy hh:mm:ss').format(dateTime);
+    return DateFormat(format ?? 'dd-MM-yyyy hh:mm').format(dateTime);
   }
 
   factory MessageModel.fromJson(String id, Map json) {

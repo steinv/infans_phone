@@ -77,7 +77,7 @@ class ChatScreenState extends State<ChatScreen> {
                     onTap: () => Navigator.push(
                         context,
                         // using index i open a chat widget
-                        MaterialPageRoute(builder: (context) => const MaterialApp())),
+                        MaterialPageRoute(builder: (context) => ChatWithScreen(chat))),
                   ),
                   const Divider(
                     height: 10.0,
@@ -86,5 +86,65 @@ class ChatScreenState extends State<ChatScreen> {
               ),
             )
             .toList());
+  }
+}
+
+class ChatWithScreen extends StatefulWidget {
+  final ChatModel chatModel;
+
+  const ChatWithScreen(this.chatModel, {super.key});
+
+  @override
+  State<StatefulWidget> createState() => ChatWithScreenState();
+}
+
+class ChatWithScreenState extends State<ChatWithScreen> {
+  final _newReplyController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: false,
+        titleSpacing: 0,
+        title: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+          const CircleAvatar(backgroundImage: AssetImage('assets/images/default-user.png')),
+          const Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
+          Text(widget.chatModel.phoneNumber),
+        ]),
+        actions: const <Widget>[
+          Icon(Icons.call),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
+          Icon(Icons.search),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
+          Icon(Icons.more_vert)
+        ],
+      ),
+      body: Text("body"),
+      bottomSheet: TextField(
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          hintText: 'Bericht',
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.send),
+            onPressed: () {
+              print(_newReplyController.text);
+              _newReplyController.clear();
+            },
+          ),
+        ),
+        autofocus: true,
+        // focusNode: _focusnode,
+        minLines: 1,
+        maxLines: 3,
+        controller: _newReplyController,
+        keyboardType: TextInputType.text,
+      ),
+    );
   }
 }

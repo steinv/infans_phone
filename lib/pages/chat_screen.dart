@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:infans_phone/models/message_model.dart';
+import 'package:infans_phone/pages/received_message_screen.dart';
+import 'package:infans_phone/pages/sent_message_screen.dart';
 import '../models/chat_model.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -125,7 +127,13 @@ class ChatWithScreenState extends State<ChatWithScreen> {
           Icon(Icons.more_vert)
         ],
       ),
-      body: Text("body"),
+      body: Container(
+        decoration: const BoxDecoration(image: DecorationImage(image: AssetImage("assets/images/bg_chat.jpg"), fit: BoxFit.cover)),
+        child: ListView(
+            children: widget.chatModel.messages.reversed
+                .map((element) => element.from == '+32460230233' ? SentMessageScreen(element.body) : ReceivedMessageScreen(element.body))
+                .toList()),
+      ),
       bottomSheet: TextField(
         decoration: InputDecoration(
           border: const OutlineInputBorder(),

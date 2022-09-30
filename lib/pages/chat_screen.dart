@@ -35,6 +35,7 @@ class ChatScreenState extends State<ChatScreen> {
           })
           .toList()
           .cast<ChatModel>();
+
       chatsSorted.sort((x, y) => y.messages[0].timestamp - x.messages[0].timestamp);
 
       setState(() {

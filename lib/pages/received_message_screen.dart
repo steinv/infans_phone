@@ -1,4 +1,4 @@
-import 'dart:math' as math; // import this
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import '../custom_shape.dart';
@@ -24,7 +24,7 @@ class ReceivedMessageScreen extends StatelessWidget {
         ),
         Flexible(
           child: Container(
-            padding: EdgeInsets.all(14),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: Colors.grey[300],
               borderRadius: const BorderRadius.only(
@@ -35,7 +35,7 @@ class ReceivedMessageScreen extends StatelessWidget {
             ),
             child: Text(
               message,
-              style: TextStyle(color: Colors.black, fontSize: 14),
+              style: const TextStyle(color: Colors.black, fontSize: 14),
             ),
           ),
         ),

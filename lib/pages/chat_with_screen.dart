@@ -1,3 +1,4 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:infans_phone/pages/received_message_screen.dart';
@@ -23,17 +24,11 @@ class ChatWithScreenState extends State<ChatWithScreen> {
   void initState() {
     super.initState();
     FirebaseDatabase.instance.ref('messages/${chat.phoneNumber}').onValue.listen((event) {
-      if(event.snapshot.value != null) {
+      if (event.snapshot.value != null) {
         Map data = event.snapshot.value as Map;
-        print(data);
         List<MessageModel> messages = data.entries.map((msg) => MessageModel.fromJson(msg.key as String, msg.value)).toList().cast<MessageModel>();
         messages.sort((msg1, msg2) => msg2.timestamp - msg1.timestamp);
-        var updatedChatModel = ChatModel(chat.phoneNumber, messages);
-
-        setState(() {
-          chat = updatedChatModel;
-          print(chat);
-        });
+        setState(() => chat = ChatModel(chat.phoneNumber, messages));
       }
     });
   }
@@ -76,7 +71,22 @@ class ChatWithScreenState extends State<ChatWithScreen> {
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.send),
                   onPressed: () {
-                    print(_newReplyController.text);
+                    var addressee = chat.phoneNumber;
+                    var textToSend = _newReplyController.text;
+
+                    setState(() {
+                      // immediately show the result even before the DB persisted and processed the message
+                      chat.messages.insert(0, MessageModel("dummy", textToSend, "+32460230233", addressee, DateTime.now().millisecond));
+                    });
+
+                    FirebaseFunctions.instance
+                          .httpsCallable('sendSms')
+                          .call({'to': addressee, 'message': textToSend})
+                          .catchError((error) {
+                            debugPrint(error);
+                            setState(() => chat.messages.removeAt(0));
+                          });
+
                     _newReplyController.clear();
                   },
                 ),

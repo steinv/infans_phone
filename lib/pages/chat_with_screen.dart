@@ -52,7 +52,7 @@ class ChatWithScreenState extends State<ChatWithScreen> {
                 .map((element) => element.from == '+32460230233' ? SentMessageScreen(element.body) : ReceivedMessageScreen(element.body))
                 .toList()),
       ),
-      bottomSheet: TextField(
+      bottomNavigationBar: TextField(
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           hintText: 'Bericht',

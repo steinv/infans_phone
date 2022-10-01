@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:infans_phone/pages/received_message_screen.dart';
 import 'package:infans_phone/pages/sent_message_screen.dart';
 import '../models/chat_model.dart';
+import '../models/message_model.dart';
 
 class ChatWithScreen extends StatefulWidget {
   final ChatModel chatModel;
@@ -22,7 +23,18 @@ class ChatWithScreenState extends State<ChatWithScreen> {
   void initState() {
     super.initState();
     FirebaseDatabase.instance.ref('messages/${chat.phoneNumber}').onValue.listen((event) {
-      return;
+      if(event.snapshot.value != null) {
+        Map data = event.snapshot.value as Map;
+        print(data);
+        List<MessageModel> messages = data.entries.map((msg) => MessageModel.fromJson(msg.key as String, msg.value)).toList().cast<MessageModel>();
+        messages.sort((msg1, msg2) => msg2.timestamp - msg1.timestamp);
+        var updatedChatModel = ChatModel(chat.phoneNumber, messages);
+
+        setState(() {
+          chat = updatedChatModel;
+          print(chat);
+        });
+      }
     });
   }
 
@@ -35,7 +47,7 @@ class ChatWithScreenState extends State<ChatWithScreen> {
         title: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
           const CircleAvatar(backgroundImage: AssetImage('assets/images/default-user.png')),
           const Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
-          Text(widget.chatModel.phoneNumber),
+          Text(chat.phoneNumber),
         ]),
         actions: const <Widget>[
           Icon(Icons.call),
@@ -51,7 +63,7 @@ class ChatWithScreenState extends State<ChatWithScreen> {
           children: [
             Expanded(
               child: ListView(
-                  children: widget.chatModel.messages.reversed
+                  children: chat.messages.reversed
                       .map((element) => element.from == '+32460230233' ? SentMessageScreen(element.body) : ReceivedMessageScreen(element.body))
                       .toList()),
             ),

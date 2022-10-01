@@ -1,9 +1,12 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:infans_phone/models/chat_model.dart';
 
 import '../models/user_model.dart';
+import 'chat_with_screen.dart';
 
 class ContactScreen extends StatefulWidget {
   const ContactScreen({super.key});
@@ -22,13 +25,10 @@ class ContactScreenState extends State<ContactScreen> {
     super.initState();
 
     FirebaseDatabase.instance.ref('users').onValue.listen((event) {
-      // TODO figure out a way that's less heavy than jsonDecode(jsonEncode()) to convert
+      // TODO why is jsonDecode(jsonEncode necessary here?
       final data = jsonDecode(jsonEncode(event.snapshot.value));
-      List<UserModel> usersWithName = data.entries
-          .map((entry) => UserModel.fromJson(entry.key, entry.value))
-          .where((element) => element.name != null)
-          .toList()
-          .cast<UserModel>();
+      List<UserModel> usersWithName =
+          data.entries.map((entry) => UserModel.fromJson(entry.key, entry.value)).where((element) => element.name != null).toList().cast<UserModel>();
       usersWithName.sort((x, y) => x.getFullName().compareTo(y.getFullName()));
 
       setState(() {
@@ -40,18 +40,16 @@ class ContactScreenState extends State<ContactScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xfff2f2f2),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Expanded(
             child: Container(
-              padding: const EdgeInsets.all(8.0),
-              color: Colors.white,
               child: ListView(
-                children: contacts.map((contact) => ListTile(
+                children: contacts
+                    .map((contact) => ListTile(
                           leading: CircleAvatar(
-                            radius: 30,
+                            foregroundColor: Theme.of(context).primaryColor,
+                            backgroundColor: Colors.grey,
                             backgroundImage: contact.profilePicture(),
                           ),
                           title: Text(
@@ -59,10 +57,7 @@ class ContactScreenState extends State<ContactScreen> {
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(contact.email ?? ""),
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const MaterialApp()),
-                          ),
+                          onTap: onTapContact(contact),
                         ))
                     .toList(),
               ),
@@ -71,5 +66,14 @@ class ContactScreenState extends State<ContactScreen> {
         ],
       ),
     );
+  }
+
+  onTapContact(UserModel contact) {
+    if (contact.phoneNumber != null) {
+      return () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatWithScreen(ChatModel(contact.phoneNumber!, List.empty()))));
+    } else {
+      // TODO popup?
+      () => print('No phoneNumber available');
+    }
   }
 }

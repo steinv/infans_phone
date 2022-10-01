@@ -10,7 +10,7 @@ class LoginScreen extends StatelessWidget {
     debugPrint('Email: ${data.name}, Password: ${data.password}');
     return FirebaseAuth.instance
         .signInWithEmailAndPassword(email: data.name, password: data.password)
-        .then((_) => null, onError: (error) => error.toString());
+        .then((_) => null, onError: (error) => error.message ?? error.toString());
   }
 
   Future<String> _recoverPassword(String name) {
@@ -21,6 +21,11 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
+      theme: LoginTheme(
+          primaryColor: ThemeData().colorScheme.primary,
+          accentColor: ThemeData().colorScheme.secondary,
+          pageColorLight: Colors.white,
+      ),
       title: 'Infans',
       logo: const AssetImage('assets/images/infans.png'),
       messages: LoginMessages(

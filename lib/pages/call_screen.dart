@@ -40,35 +40,33 @@ class CallsScreenState extends State<CallsScreen> {
       child: Column(
         children: <Widget>[
           Expanded(
-            child: Container(
-              child: ListView(
-                children: calls
-                    .map((call) => ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.transparent,
-                            child: getCallIcon(call),
-                          ),
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                call.phoneNumber,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                DateTimeUtil.timeStampAsString(call.timestamp, null),
-                                style: const TextStyle(color: Colors.grey, fontSize: 14.0),
-                              ),
-                            ],
-                          ),
-                          subtitle: Text(DateTimeUtil.timeAsString(call.dialCallDuration)),
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const MaterialApp()),
-                          ),
-                        ))
-                    .toList(),
-              ),
+            child: ListView(
+              children: calls
+                  .map((call) => ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          child: getCallIcon(call),
+                        ),
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              call.phoneNumber,
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              DateTimeUtil.timeStampAsString(call.timestamp, null),
+                              style: const TextStyle(color: Colors.grey, fontSize: 14.0),
+                            ),
+                          ],
+                        ),
+                        subtitle: Text(DateTimeUtil.timeAsString(call.dialCallDuration)),
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const MaterialApp()),
+                        ),
+                      ))
+                  .toList(),
             ),
           ),
         ],

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:infans_phone/models/chat_model.dart';
 import 'package:infans_phone/pages/call_screen.dart';
 import 'package:infans_phone/pages/chat_screen.dart';
+import 'package:infans_phone/pages/chat_with_screen.dart';
 import 'package:infans_phone/pages/contact_screen.dart';
 
 class InfansPhoneAppHome extends StatefulWidget {
@@ -57,14 +59,22 @@ class InfansPhoneAppHomeState extends State<InfansPhoneAppHome> with SingleTicke
       ),
       floatingActionButton: showFab
           ? FloatingActionButton(
-              backgroundColor: Theme.of(context).colorScheme.secondary,
-              child: const Icon(
-                Icons.message,
-                color: Colors.white,
-              ),
-              onPressed: () => print("open chats"),
-            )
-          : null,
+        backgroundColor: Theme
+            .of(context)
+            .colorScheme
+            .secondary,
+        child: const Icon(
+          Icons.message,
+          color: Colors.white,
+        ),
+        onPressed: () =>
+         // TODO phoneNumber input
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ChatWithScreen(ChatModel('TODO Input phoneNumber screen', List.empty()))),
+      ),
+    ): null
+    ,
     );
   }
 }

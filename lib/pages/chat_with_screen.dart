@@ -17,7 +17,6 @@ class ChatWithScreen extends StatefulWidget {
 
 class ChatWithScreenState extends State<ChatWithScreen> {
   final _newReplyController = TextEditingController();
-
   late ChatModel chat = widget.chatModel;
 
   @override
@@ -39,7 +38,7 @@ class ChatWithScreenState extends State<ChatWithScreen> {
       appBar: AppBar(
         centerTitle: false,
         titleSpacing: 0,
-        title: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+        title: Row(children: <Widget>[
           const CircleAvatar(backgroundImage: AssetImage('assets/images/default-user.png')),
           const Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
           Text(chat.phoneNumber),
@@ -57,10 +56,15 @@ class ChatWithScreenState extends State<ChatWithScreen> {
         child: Column(
           children: [
             Expanded(
-              child: ListView(
-                  children: chat.messages.reversed
-                      .map((element) => element.from == '+32460230233' ? SentMessageScreen(element.body) : ReceivedMessageScreen(element.body))
-                      .toList()),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: ListView(
+                    reverse: true,
+                    shrinkWrap: true,
+                    children: chat.messages
+                        .map((element) => element.from == '+32460230233' ? SentMessageScreen(element.body) : ReceivedMessageScreen(element.body))
+                        .toList()),
+              ),
             ),
             TextField(
               decoration: InputDecoration(
@@ -74,18 +78,13 @@ class ChatWithScreenState extends State<ChatWithScreen> {
                     var addressee = chat.phoneNumber;
                     var textToSend = _newReplyController.text;
 
-                    setState(() {
-                      // immediately show the result even before the DB persisted and processed the message
-                      chat.messages.insert(0, MessageModel("dummy", textToSend, "+32460230233", addressee, DateTime.now().millisecond));
-                    });
+                    // immediately show the result even before the DB persisted and processed the message
+                    setState(() => chat.messages.insert(0, MessageModel("dummy", textToSend, "+32460230233", addressee, DateTime.now().millisecond)));
 
-                    FirebaseFunctions.instance
-                          .httpsCallable('sendSms')
-                          .call({'to': addressee, 'message': textToSend})
-                          .catchError((error) {
-                            debugPrint(error);
-                            setState(() => chat.messages.removeAt(0));
-                          });
+                    FirebaseFunctions.instance.httpsCallable('sendSms').call({'to': addressee, 'message': textToSend}).catchError((error) {
+                      debugPrint(error);
+                      setState(() => chat.messages.removeAt(0));
+                    });
 
                     _newReplyController.clear();
                   },

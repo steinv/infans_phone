@@ -22,7 +22,7 @@ class ChatWithScreenState extends State<ChatWithScreen> {
   void initState() {
     super.initState();
     FirebaseDatabase.instance.ref('messages/${chat.phoneNumber}').onValue.listen((event) {
-        return;
+      return;
     });
   }
 
@@ -47,29 +47,37 @@ class ChatWithScreenState extends State<ChatWithScreen> {
       ),
       body: Container(
         decoration: const BoxDecoration(image: DecorationImage(image: AssetImage("assets/images/bg_chat.jpg"), fit: BoxFit.cover)),
-        child: ListView(
-            children: widget.chatModel.messages.reversed
-                .map((element) => element.from == '+32460230233' ? SentMessageScreen(element.body) : ReceivedMessageScreen(element.body))
-                .toList()),
-      ),
-      bottomNavigationBar: TextField(
-        decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          hintText: 'Bericht',
-          suffixIcon: IconButton(
-            icon: const Icon(Icons.send),
-            onPressed: () {
-              print(_newReplyController.text);
-              _newReplyController.clear();
-            },
-          ),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                  children: widget.chatModel.messages.reversed
+                      .map((element) => element.from == '+32460230233' ? SentMessageScreen(element.body) : ReceivedMessageScreen(element.body))
+                      .toList()),
+            ),
+            TextField(
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+                hintText: 'Bericht',
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.send),
+                  onPressed: () {
+                    print(_newReplyController.text);
+                    _newReplyController.clear();
+                  },
+                ),
+              ),
+              autofocus: true,
+              // focusNode: _focusnode,
+              minLines: 1,
+              maxLines: 3,
+              controller: _newReplyController,
+              keyboardType: TextInputType.text,
+            ),
+          ],
         ),
-        autofocus: true,
-        // focusNode: _focusnode,
-        minLines: 1,
-        maxLines: 3,
-        controller: _newReplyController,
-        keyboardType: TextInputType.text,
       ),
     );
   }

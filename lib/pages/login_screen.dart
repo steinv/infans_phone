@@ -22,9 +22,10 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlutterLogin(
       theme: LoginTheme(
-          primaryColor: ThemeData().colorScheme.primary,
-          accentColor: ThemeData().colorScheme.secondary,
+          primaryColor: Colors.pink,
+          accentColor: Colors.white,
           pageColorLight: Colors.white,
+          pageColorDark: Colors.pink,
       ),
       title: 'Infans',
       logo: const AssetImage('assets/images/infans.png'),

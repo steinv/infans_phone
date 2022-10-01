@@ -38,7 +38,6 @@ class CallsScreenState extends State<CallsScreen> {
     return Container(
       color: const Color(0xfff2f2f2),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Expanded(
             child: Container(
@@ -49,11 +48,20 @@ class CallsScreenState extends State<CallsScreen> {
                             backgroundColor: Colors.transparent,
                             child: getCallIcon(call),
                           ),
-                          title: Text(
-                            call.phoneNumber,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                call.phoneNumber,
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                DateTimeUtil.timeStampAsString(call.timestamp, null),
+                                style: const TextStyle(color: Colors.grey, fontSize: 14.0),
+                              ),
+                            ],
                           ),
-                          subtitle: Text(DateTimeUtil.timeStampAsString(call.timestamp, null)),
+                          subtitle: Text(DateTimeUtil.timeAsString(call.dialCallDuration)),
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const MaterialApp()),

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:infans_phone/util/date_time_util.dart';
+import 'package:infans_phone/util/formatter.dart';
 
 import '../models/call_model.dart';
 
@@ -55,12 +55,12 @@ class CallsScreenState extends State<CallsScreen> {
                               style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              DateTimeUtil.timeStampAsString(call.timestamp, null),
+                              FormatterUtil.timeStampAsString(call.timestamp, null),
                               style: const TextStyle(color: Colors.grey, fontSize: 14.0),
                             ),
                           ],
                         ),
-                        subtitle: Text(DateTimeUtil.timeAsString(call.dialCallDuration)),
+                        subtitle: Text(FormatterUtil.timeAsString(call.dialCallDuration)),
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const MaterialApp()),

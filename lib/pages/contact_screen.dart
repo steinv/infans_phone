@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:infans_phone/models/chat_model.dart';
+import 'package:infans_phone/util/formatter.dart';
 
 import '../models/user_model.dart';
 import 'chat_with_screen.dart';
@@ -70,22 +71,11 @@ class ContactScreenState extends State<ContactScreen> {
 
   onTapContact(UserModel contact) {
     if (contact.phoneNumber != null) {
-      String phoneNumber = phoneNumberToIntlFormat(contact.phoneNumber!);
+      String phoneNumber = FormatterUtil.phoneNumberToIntlFormat(contact.phoneNumber!);
       return () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatWithScreen(ChatModel(phoneNumber, List.empty()))));
     } else {
       // TODO popup?
       () => print('No phoneNumber available');
-    }
-  }
-
-  phoneNumberToIntlFormat(String telephoneNumber) {
-    String telTrimmed = telephoneNumber.replaceAll(RegExp(r"\D"), '');
-    if (telTrimmed.startsWith('00')) {
-      return '+${telTrimmed.substring(2)}';
-    } else if (telTrimmed.startsWith('0')) {
-      return '+32${telTrimmed.substring(1)}';
-    } else {
-      return '+$telTrimmed';
     }
   }
 }

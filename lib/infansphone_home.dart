@@ -4,6 +4,7 @@ import 'package:infans_phone/pages/call_screen.dart';
 import 'package:infans_phone/pages/chat_screen.dart';
 import 'package:infans_phone/pages/chat_with_screen.dart';
 import 'package:infans_phone/pages/contact_screen.dart';
+import 'package:infans_phone/pages/input_phonenumber_screen.dart';
 
 class InfansPhoneAppHome extends StatefulWidget {
   const InfansPhoneAppHome({super.key});
@@ -68,10 +69,9 @@ class InfansPhoneAppHomeState extends State<InfansPhoneAppHome> with SingleTicke
           color: Colors.white,
         ),
         onPressed: () =>
-         // TODO phoneNumber input
             Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ChatWithScreen(ChatModel('TODO Input phoneNumber screen', List.empty()))),
+                MaterialPageRoute(builder: (context) => const InputPhoneNumberScreen()),
       ),
     ): null
     ,

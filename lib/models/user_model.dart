@@ -16,7 +16,7 @@ class UserModel {
       this.stripeId, this.surname);
 
   String getFullName() {
-    return '${(name ?? "").capitalizeFirstLetter()} ${(surname ?? "").capitalizeFirstLetter()}';
+    return '${(name?.capitalizeFirstLetter() ?? "")} ${(surname?.capitalizeFirstLetter() ?? "")}';
   }
 
   ImageProvider profilePicture() {

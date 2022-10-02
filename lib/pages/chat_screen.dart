@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:infans_phone/models/message_model.dart';
-import 'package:infans_phone/util/date_time_util.dart';
+import 'package:infans_phone/util/formatter.dart';
 import '../models/chat_model.dart';
 import 'chat_with_screen.dart';
 
@@ -63,7 +63,7 @@ class ChatScreenState extends State<ChatScreen> {
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          DateTimeUtil.timeStampAsString(chat.messages[0].timestamp, null),
+                          FormatterUtil.timeStampAsString(chat.messages[0].timestamp, null),
                           style: const TextStyle(color: Colors.grey, fontSize: 14.0),
                         ),
                       ],

@@ -26,20 +26,31 @@ class InputPhoneNumberScreen extends StatelessWidget {
               body: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Autocomplete<UserModel>(
-                  optionsBuilder: (TextEditingValue textEditingValue) {
-                    return contacts
-                        .where((user) => FormatterUtil.phoneNumberToIntlFormat(user.phoneNumber!).startsWith(FormatterUtil.phoneNumberToIntlFormat(textEditingValue.text)))
-                        .toList();
-                  },
+                  optionsBuilder: (TextEditingValue textEditingValue) => contacts
+                      .where((user) => FormatterUtil.phoneNumberToIntlFormat(user.phoneNumber!)
+                          .startsWith(FormatterUtil.phoneNumberToIntlFormat(textEditingValue.text)))
+                      .toList(),
                   displayStringForOption: (UserModel user) => user.phoneNumber!,
                   fieldViewBuilder: (BuildContext context, TextEditingController fieldTextEditingController, FocusNode fieldFocusNode,
-                      VoidCallback onFieldSubmitted) {
-                    return TextField(
-                      controller: fieldTextEditingController,
-                      focusNode: fieldFocusNode,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    );
-                  },
+                          VoidCallback onFieldSubmitted) =>
+                      TextField(
+                    autofocus: true,
+                    keyboardType: TextInputType.phone,
+                    controller: fieldTextEditingController,
+                    focusNode: fieldFocusNode,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.send),
+                        onPressed: () {
+                          if (fieldTextEditingController.text.trim().isNotEmpty) {
+                            var phoneNumber = FormatterUtil.phoneNumberToIntlFormat(fieldTextEditingController.text);
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ChatWithScreen(ChatModel(phoneNumber, List.empty()))));
+                          }
+                        },
+                      ),
+                    ),
+                  ),
                   onSelected: (UserModel selection) {
                     var phoneNumber = FormatterUtil.phoneNumberToIntlFormat(selection.phoneNumber!);
                     Navigator.push(context, MaterialPageRoute(builder: (context) => ChatWithScreen(ChatModel(phoneNumber, List.empty()))));

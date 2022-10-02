@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:infans_phone/pages/loading_widget.dart';
 
 import '../models/chat_model.dart';
 import '../models/user_model.dart';
@@ -75,7 +76,7 @@ class InputPhoneNumberScreen extends StatelessWidget {
               ),
             );
           } else {
-            return const CircularProgressIndicator();
+            return const LoadingWidget();
           }
         });
   }

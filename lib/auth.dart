@@ -11,7 +11,7 @@ class AuthWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(future: FirebaseAuth.instance.authStateChanges().first, builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-      if(snapshot.hasData) {
+      if (snapshot.connectionState == ConnectionState.done) {
         return snapshot.data != null ? const InfansPhoneAppHome() : const LoginScreen();
       } else {
         return const LoadingWidget();

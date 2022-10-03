@@ -74,8 +74,19 @@ class ContactScreenState extends State<ContactScreen> {
       String phoneNumber = FormatterUtil.phoneNumberToIntlFormat(contact.phoneNumber!);
       return () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatWithScreen(ChatModel(phoneNumber, List.empty()))));
     } else {
-      // TODO popup?
-      () => print('No phoneNumber available');
+      return () => showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Chatten'),
+          content: Text('${contact.getFullName()} heeft geen telefoonnummer geregistreerd'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'OK'),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
   }
 }

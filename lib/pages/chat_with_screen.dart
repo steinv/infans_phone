@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:infans_phone/pages/received_message_screen.dart';
 import 'package:infans_phone/pages/sent_message_screen.dart';
 import '../models/chat_model.dart';
 import '../models/message_model.dart';
+import '../util/messages_repository.dart';
 
 class ChatWithScreen extends StatefulWidget {
   final ChatModel chatModel;
@@ -18,18 +20,18 @@ class ChatWithScreen extends StatefulWidget {
 class ChatWithScreenState extends State<ChatWithScreen> {
   final _newReplyController = TextEditingController();
   late ChatModel chat = widget.chatModel;
+  late StreamSubscription listen;
 
   @override
   void initState() {
     super.initState();
-    FirebaseDatabase.instance.ref('messages/${chat.phoneNumber}').onValue.listen((event) {
-      if (event.snapshot.value != null) {
-        Map data = event.snapshot.value as Map;
-        List<MessageModel> messages = data.entries.map((msg) => MessageModel.fromJson(msg.key as String, msg.value)).toList().cast<MessageModel>();
-        messages.sort((msg1, msg2) => msg2.timestamp - msg1.timestamp);
-        setState(() => chat = ChatModel(chat.phoneNumber, messages));
-      }
-    });
+    listen = MessagesRepository.listenForPhoneNumber(chat.phoneNumber, (chatSorted) => setState(() => chat = chatSorted));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    listen.cancel();
   }
 
   @override

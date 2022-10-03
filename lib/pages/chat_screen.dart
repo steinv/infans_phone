@@ -1,7 +1,8 @@
-import 'package:firebase_database/firebase_database.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:infans_phone/models/message_model.dart';
 import 'package:infans_phone/util/formatter.dart';
+import 'package:infans_phone/util/messages_repository.dart';
 import '../models/chat_model.dart';
 import 'chat_with_screen.dart';
 
@@ -15,31 +16,19 @@ class ChatScreen extends StatefulWidget {
 }
 
 class ChatScreenState extends State<ChatScreen> {
+  late StreamSubscription listen;
   List<ChatModel> chats = List.empty();
 
   @override
   void initState() {
     super.initState();
+    listen = MessagesRepository.listen((chatsSorted) => setState(() => chats = chatsSorted));
+  }
 
-    FirebaseDatabase.instance.ref('messages').onValue.listen((event) {
-      // { phoneNumber: { "key": { object }}}
-      final data = event.snapshot.value as Map;
-      List<ChatModel> chatsSorted = data.entries
-          .map((entry) {
-            List<MessageModel> messages =
-                entry.value.entries.map((msg) => MessageModel.fromJson(msg.key as String, msg.value)).toList().cast<MessageModel>();
-            messages.sort((msg1, msg2) => msg2.timestamp - msg1.timestamp);
-            return ChatModel(entry.key, messages);
-          })
-          .toList()
-          .cast<ChatModel>();
-
-      chatsSorted.sort((x, y) => y.messages[0].timestamp - x.messages[0].timestamp);
-
-      setState(() {
-        chats = chatsSorted;
-      });
-    });
+  @override
+  void dispose() {
+    super.dispose();
+    listen.cancel();
   }
 
   @override

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:infans_phone/models/chat_model.dart';
 import 'package:infans_phone/pages/call_screen.dart';
 import 'package:infans_phone/pages/chat_screen.dart';
-import 'package:infans_phone/pages/chat_with_screen.dart';
 import 'package:infans_phone/pages/contact_screen.dart';
 import 'package:infans_phone/pages/input_phonenumber_screen.dart';
 

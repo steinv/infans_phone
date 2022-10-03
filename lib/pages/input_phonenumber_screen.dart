@@ -103,7 +103,7 @@ class InputPhoneNumberScreen extends StatelessWidget {
           .where((element) => element.phoneNumber != null && (element.name != null || element.surname != null))
           .toList()
           .cast<UserModel>();
-      usersWithPhoneNumber.sort((x, y) => x.getFullName()!.compareTo(y.getFullName()!));
+      usersWithPhoneNumber.sort((x, y) => x.getFullName().compareTo(y.getFullName()));
       return usersWithPhoneNumber;
     });
   }

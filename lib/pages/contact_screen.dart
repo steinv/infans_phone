@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:infans_phone/models/chat_model.dart';
@@ -40,32 +39,28 @@ class ContactScreenState extends State<ContactScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              child: ListView(
-                children: contacts
-                    .map((contact) => ListTile(
-                          leading: CircleAvatar(
-                            foregroundColor: Theme.of(context).primaryColor,
-                            backgroundColor: Colors.grey,
-                            backgroundImage: contact.profilePicture(),
-                          ),
-                          title: Text(
-                            contact.getFullName(),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(contact.email ?? ""),
-                          onTap: onTapContact(contact),
-                        ))
-                    .toList(),
-              ),
-            ),
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: ListView(
+            children: contacts
+                .map((contact) => ListTile(
+                      leading: CircleAvatar(
+                        foregroundColor: Theme.of(context).primaryColor,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: contact.profilePicture(),
+                      ),
+                      title: Text(
+                        contact.getFullName(),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(contact.email ?? ""),
+                      onTap: onTapContact(contact),
+                    ))
+                .toList(),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

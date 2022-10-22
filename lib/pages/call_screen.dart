@@ -1,6 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:infans_phone/pages/calling_screen.dart';
 import 'package:infans_phone/util/formatter.dart';
+import 'package:twilio_voice/twilio_voice.dart';
 
 import '../models/call_model.dart';
 
@@ -41,35 +43,53 @@ class CallsScreenState extends State<CallsScreen> {
             child: ListView(
               children: calls
                   .map((call) => ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          child: getCallIcon(call),
-                        ),
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              call.phoneNumber,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              FormatterUtil.timeStampAsString(call.timestamp, null),
-                              style: const TextStyle(color: Colors.grey, fontSize: 14.0),
-                            ),
-                          ],
-                        ),
-                        subtitle: Text(FormatterUtil.timeAsString(call.dialCallDuration)),
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const MaterialApp()),
-                        ),
-                      ))
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        child: getCallIcon(call),
+                      ),
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            call.phoneNumber,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            FormatterUtil.timeStampAsString(call.timestamp, null),
+                            style: const TextStyle(color: Colors.grey, fontSize: 14.0),
+                          ),
+                        ],
+                      ),
+                      subtitle: Text(FormatterUtil.timeAsString(call.dialCallDuration)),
+                      onTap: () => dialCustomer(call.phoneNumber).then((dialed) => dialed
+                          ? Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const CallingScreen()),
+                            )
+                          : null)))
                   .toList(),
             ),
           ),
         ],
       ),
     );
+  }
+
+  Future<bool> dialCustomer(String phoneNumber) async {
+    return TwilioVoice.instance.hasMicAccess().then((hasMicAccess) {
+      if (!hasMicAccess) {
+        TwilioVoice.instance.requestMicAccess().then((value) {
+          if (true == value) {
+            TwilioVoice.instance.call.place(to: '+32478394317', from: 'Infans');
+            return true;
+          }
+          return false;
+        });
+      }
+
+      TwilioVoice.instance.call.place(to: '+32478394317', from: 'Infans');
+      return true;
+    });
   }
 
   Icon getCallIcon(CallModel callModel) {

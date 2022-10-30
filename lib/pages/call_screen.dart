@@ -76,16 +76,17 @@ class CallsScreenState extends State<CallsScreen> {
   }
 
   Future<bool?> dialCustomer(String phoneNumber) async {
+    String tel = FormatterUtil.phoneNumberToIntlFormat(phoneNumber);
     return TwilioVoice.instance.hasMicAccess().then((hasMicAccess) {
       if (!hasMicAccess) {
         TwilioVoice.instance.requestMicAccess().then((value) {
           if (true == value) {
-            return TwilioVoice.instance.call.place(to: '+32497867844', from: '+32460230233');
+            return TwilioVoice.instance.call.place(to: tel, from: '+32460230233');
           }
           return false;
         });
       }
-      return TwilioVoice.instance.call.place(to: '+32497867844', from: '+32460230233');
+      return TwilioVoice.instance.call.place(to: tel, from: '+32460230233');
     });
   }
 

@@ -43,6 +43,7 @@ dependencies:
   firebase_messaging: ^13.1.0
   flutter_login: ^4.0.0
   shared_preferences: ^2.0.15
+  # replace with twilio_voice_mimp 0.2.5 -- https://github.com/diegogarciar/twilio_voice
   twilio_voice: ^0.0.9
 
 dev_dependencies:

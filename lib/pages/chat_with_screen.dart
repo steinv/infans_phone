@@ -4,9 +4,12 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:infans_phone/pages/received_message_screen.dart';
 import 'package:infans_phone/pages/sent_message_screen.dart';
+import 'package:twilio_voice/twilio_voice.dart';
 import '../models/chat_model.dart';
 import '../models/message_model.dart';
+import '../util/formatter.dart';
 import '../util/messages_repository.dart';
+import 'calling_screen.dart';
 
 class ChatWithScreen extends StatefulWidget {
   final ChatModel chatModel;
@@ -45,8 +48,16 @@ class ChatWithScreenState extends State<ChatWithScreen> {
           const Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
           Text(chat.phoneNumber),
         ]),
-        actions: const <Widget>[
-          Icon(Icons.call),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.call),
+            onPressed: () => dialCustomer(chat.phoneNumber).then((dialed) => dialed == true
+                ? Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const CallingScreen()),
+                  )
+                : null),
+          ),
           Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
           Icon(Icons.search),
           Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
@@ -103,5 +114,21 @@ class ChatWithScreenState extends State<ChatWithScreen> {
         ),
       ),
     );
+  }
+
+  // TODO refactor duplicated code
+  Future<bool?> dialCustomer(String phoneNumber) async {
+    String tel = FormatterUtil.phoneNumberToIntlFormat(phoneNumber);
+    return TwilioVoice.instance.hasMicAccess().then((hasMicAccess) {
+      if (!hasMicAccess) {
+        TwilioVoice.instance.requestMicAccess().then((value) {
+          if (true == value) {
+            return TwilioVoice.instance.call.place(to: tel, from: '+32460230233');
+          }
+          return false;
+        });
+      }
+      return TwilioVoice.instance.call.place(to: tel, from: '+32460230233');
+    });
   }
 }

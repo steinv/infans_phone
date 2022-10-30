@@ -61,7 +61,7 @@ class CallsScreenState extends State<CallsScreen> {
                         ],
                       ),
                       subtitle: Text(FormatterUtil.timeAsString(call.dialCallDuration)),
-                      onTap: () => dialCustomer(call.phoneNumber).then((dialed) => dialed
+                      onTap: () => dialCustomer(call.phoneNumber).then((dialed) => dialed == true
                           ? Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => const CallingScreen()),
@@ -75,20 +75,17 @@ class CallsScreenState extends State<CallsScreen> {
     );
   }
 
-  Future<bool> dialCustomer(String phoneNumber) async {
+  Future<bool?> dialCustomer(String phoneNumber) async {
     return TwilioVoice.instance.hasMicAccess().then((hasMicAccess) {
       if (!hasMicAccess) {
         TwilioVoice.instance.requestMicAccess().then((value) {
           if (true == value) {
-            TwilioVoice.instance.call.place(to: '+32478394317', from: 'Infans');
-            return true;
+            return TwilioVoice.instance.call.place(to: '+32497867844', from: '+32460230233');
           }
           return false;
         });
       }
-
-      TwilioVoice.instance.call.place(to: '+32478394317', from: 'Infans');
-      return true;
+      return TwilioVoice.instance.call.place(to: '+32497867844', from: '+32460230233');
     });
   }
 

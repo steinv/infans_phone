@@ -194,7 +194,7 @@ class CallingScreenState extends State<CallingScreen> {
                               border:
                               Border.all(color: Colors.white, width: 1.0),
                               color: mute
-                                  ? Theme.of(context).accentColor
+                                  ? Theme.of(context).colorScheme.secondary
                                   : Colors.white24,
                               shape: BoxShape.circle,
                             ),

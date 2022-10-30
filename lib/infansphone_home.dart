@@ -51,7 +51,7 @@ class InfansPhoneAppHomeState extends State<InfansPhoneAppHome> with SingleTicke
   registerTwilio() async {
     final result = await FirebaseFunctions.instance.httpsCallable("twilioAccessToken").call();
     final String? androidNotificationToken = !kIsWeb && Platform.isAndroid ? await FirebaseMessaging.instance.getToken() : null;
-    TwilioVoice.instance.setTokens(accessToken: result.data.token, deviceToken: androidNotificationToken);
+    TwilioVoice.instance.setTokens(accessToken: result.data['token'], deviceToken: androidNotificationToken);
   }
 
   @override

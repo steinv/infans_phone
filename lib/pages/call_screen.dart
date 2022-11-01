@@ -5,6 +5,7 @@ import 'package:infans_phone/util/formatter.dart';
 import 'package:twilio_voice/twilio_voice.dart';
 
 import '../models/call_model.dart';
+import '../util/firebase_users.dart';
 
 class CallsScreen extends StatefulWidget {
   const CallsScreen({super.key});
@@ -51,7 +52,7 @@ class CallsScreenState extends State<CallsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Text(
-                            call.phoneNumber,
+                            FirebaseUsers.instance.getNameByPhoneNumber(call.phoneNumber),
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Text(

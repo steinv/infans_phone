@@ -6,6 +6,7 @@ import 'package:infans_phone/models/chat_model.dart';
 import 'package:infans_phone/util/formatter.dart';
 
 import '../models/user_model.dart';
+import '../util/firebase_users.dart';
 import 'chat_with_screen.dart';
 
 class ContactScreen extends StatefulWidget {
@@ -24,17 +25,10 @@ class ContactScreenState extends State<ContactScreen> {
   void initState() {
     super.initState();
 
-    FirebaseDatabase.instance.ref('users').onValue.listen((event) {
-      // TODO why is jsonDecode(jsonEncode necessary here?
-      final data = jsonDecode(jsonEncode(event.snapshot.value));
-      List<UserModel> usersWithName =
-          data.entries.map((entry) => UserModel.fromJson(entry.key, entry.value)).where((element) => element.name != null).toList().cast<UserModel>();
-      usersWithName.sort((x, y) => x.getFullName().compareTo(y.getFullName()));
-
-      setState(() {
-        contacts = usersWithName;
-      });
+    FirebaseUsers.instance.usersStream.listen((event) {
+      setState(() => contacts = event);
     });
+
   }
 
   @override
@@ -70,18 +64,18 @@ class ContactScreenState extends State<ContactScreen> {
       return () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatWithScreen(ChatModel(phoneNumber, List.empty()))));
     } else {
       return () => showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Chatten'),
-          content: Text('${contact.getFullName()} heeft geen telefoonnummer geregistreerd'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'OK'),
-              child: const Text('OK'),
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Chatten'),
+              content: Text('${contact.getFullName()} heeft geen telefoonnummer geregistreerd'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'OK'),
+                  child: const Text('OK'),
+                ),
+              ],
             ),
-          ],
-        ),
-      );
+          );
     }
   }
 }

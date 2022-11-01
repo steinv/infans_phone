@@ -15,7 +15,10 @@ class FormatterUtil {
     return '${hours.floor() > 0 ? '${hours.floor()}u ' : ''}${minutes.floor() > 0 ? '${minutes.floor()}min ' : ''}${seconds.floor()}sec ';
   }
 
-  static phoneNumberToIntlFormat(String telephoneNumber) {
+  static phoneNumberToIntlFormat(String? telephoneNumber) {
+    if(telephoneNumber == null) {
+      return null;
+    }
     String telTrimmed = telephoneNumber.replaceAll(RegExp(r"\D"), '');
     if (telTrimmed.startsWith('00')) {
       return '+${telTrimmed.substring(2)}';

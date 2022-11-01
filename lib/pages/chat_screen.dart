@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:infans_phone/util/firebase_users.dart';
 import 'package:infans_phone/util/formatter.dart';
 import 'package:infans_phone/util/messages_repository.dart';
 import '../models/chat_model.dart';
@@ -48,7 +49,7 @@ class ChatScreenState extends State<ChatScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(
-                          chat.phoneNumber,
+                          FirebaseUsers.instance.getNameByPhoneNumber(chat.phoneNumber),
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Text(

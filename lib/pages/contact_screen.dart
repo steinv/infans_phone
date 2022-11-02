@@ -1,6 +1,4 @@
-import 'dart:convert';
 
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:infans_phone/models/chat_model.dart';
 import 'package:infans_phone/util/formatter.dart';
@@ -61,7 +59,8 @@ class ContactScreenState extends State<ContactScreen> {
   onTapContact(UserModel contact) {
     if (contact.phoneNumber != null) {
       String phoneNumber = FormatterUtil.phoneNumberToIntlFormat(contact.phoneNumber!);
-      return () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatWithScreen(ChatModel(phoneNumber, List.empty()))));
+      var chat = ChatModel(phoneNumber, List.empty());
+      return () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatWithScreen(chatModel: chat, userModel: contact)));
     } else {
       return () => showDialog<String>(
             context: context,

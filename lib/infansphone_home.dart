@@ -8,7 +8,7 @@ import 'package:infans_phone/pages/call_screen.dart';
 import 'package:infans_phone/pages/chat_screen.dart';
 import 'package:infans_phone/pages/contact_screen.dart';
 import 'package:infans_phone/pages/input_phonenumber_screen.dart';
-import 'package:twilio_voice/twilio_voice.dart';
+import 'package:twilio_voice_mimp/twilio_voice.dart';
 
 class InfansPhoneAppHome extends StatefulWidget {
   const InfansPhoneAppHome({super.key});

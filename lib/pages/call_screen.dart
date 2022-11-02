@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:infans_phone/models/user_model.dart';
 import 'package:infans_phone/pages/calling_screen.dart';
 import 'package:infans_phone/util/formatter.dart';
-import 'package:twilio_voice/twilio_voice.dart';
 
 import '../models/call_model.dart';
 import '../util/firebase_users.dart';
@@ -17,13 +19,15 @@ class CallsScreen extends StatefulWidget {
 }
 
 class CallsScreenState extends State<CallsScreen> {
+  late StreamSubscription<DatabaseEvent> callSubscription;
   List<CallModel> calls = List.empty();
+  List<UserModel> users = List.empty();
 
   @override
   void initState() {
     super.initState();
 
-    FirebaseDatabase.instance.ref('calls').onValue.listen((event) {
+    callSubscription = FirebaseDatabase.instance.ref('calls').onValue.listen((event) {
       final data = event.snapshot.value as Map;
       List<CallModel> callsSorted = data.entries.map((entry) => CallModel.fromJson(entry.key, entry.value)).toList().cast<CallModel>();
       callsSorted.sort((x, y) => y.timestamp - x.timestamp);
@@ -32,6 +36,18 @@ class CallsScreenState extends State<CallsScreen> {
         calls = callsSorted;
       });
     });
+
+    FirebaseUsers.instance.usersStream.listen((event) {
+      setState(() {
+        users = event;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    callSubscription.cancel();
   }
 
   @override
@@ -42,53 +58,40 @@ class CallsScreenState extends State<CallsScreen> {
         children: <Widget>[
           Expanded(
             child: ListView(
-              children: calls
-                  .map((call) => ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        child: getCallIcon(call),
-                      ),
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            FirebaseUsers.instance.getNameByPhoneNumber(call.phoneNumber),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            FormatterUtil.timeStampAsString(call.timestamp, null),
-                            style: const TextStyle(color: Colors.grey, fontSize: 14.0),
-                          ),
-                        ],
-                      ),
-                      subtitle: Text(FormatterUtil.timeAsString(call.dialCallDuration)),
-                      onTap: () => dialCustomer(call.phoneNumber).then((dialed) => dialed == true
-                          ? Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const CallingScreen()),
-                            )
-                          : null)))
-                  .toList(),
+              children: calls.map((call) {
+                var currentUser = FirebaseUsers.getUserByPhoneNumber(users, call.phoneNumber);
+                var displayName = currentUser != null ? currentUser.getFullName() : call.phoneNumber;
+                return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.transparent,
+                      child: getCallIcon(call),
+                    ),
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          displayName,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          FormatterUtil.timeStampAsString(call.timestamp, null),
+                          style: const TextStyle(color: Colors.grey, fontSize: 14.0),
+                        ),
+                      ],
+                    ),
+                    subtitle: Text(FormatterUtil.timeAsString(call.dialCallDuration)),
+                    onTap: () => CallingScreen.dialCustomer(call.phoneNumber).then((dialed) => dialed == true
+                        ? Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => CallingScreen(caller: displayName,)),
+                          )
+                        : null));
+              }).toList(),
             ),
           ),
         ],
       ),
     );
-  }
-
-  Future<bool?> dialCustomer(String phoneNumber) async {
-    String tel = FormatterUtil.phoneNumberToIntlFormat(phoneNumber);
-    return TwilioVoice.instance.hasMicAccess().then((hasMicAccess) {
-      if (!hasMicAccess) {
-        TwilioVoice.instance.requestMicAccess().then((value) {
-          if (true == value) {
-            return TwilioVoice.instance.call.place(to: tel, from: '+32460230233');
-          }
-          return false;
-        });
-      }
-      return TwilioVoice.instance.call.place(to: tel, from: '+32460230233');
-    });
   }
 
   Icon getCallIcon(CallModel callModel) {

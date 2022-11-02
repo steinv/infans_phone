@@ -4,17 +4,17 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:infans_phone/pages/received_message_screen.dart';
 import 'package:infans_phone/pages/sent_message_screen.dart';
-import 'package:twilio_voice/twilio_voice.dart';
 import '../models/chat_model.dart';
 import '../models/message_model.dart';
-import '../util/formatter.dart';
+import '../models/user_model.dart';
 import '../util/messages_repository.dart';
 import 'calling_screen.dart';
 
 class ChatWithScreen extends StatefulWidget {
   final ChatModel chatModel;
+  final UserModel? userModel;
 
-  const ChatWithScreen(this.chatModel, {super.key});
+  const ChatWithScreen({super.key, required this.chatModel, this.userModel});
 
   @override
   State<StatefulWidget> createState() => ChatWithScreenState();
@@ -39,29 +39,32 @@ class ChatWithScreenState extends State<ChatWithScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ImageProvider avatar = widget.userModel != null ? widget.userModel!.profilePicture() : const AssetImage('assets/images/default-user.png');
+    String displayName = widget.userModel != null ? widget.userModel!.getFullName() : chat.phoneNumber;
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
         titleSpacing: 0,
         title: Row(children: <Widget>[
-          const CircleAvatar(backgroundImage: AssetImage('assets/images/default-user.png')),
+          CircleAvatar(backgroundImage: avatar),
           const Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
-          Text(chat.phoneNumber),
+          Text(displayName),
         ]),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.call),
-            onPressed: () => dialCustomer(chat.phoneNumber).then((dialed) => dialed == true
+            onPressed: () => CallingScreen.dialCustomer(chat.phoneNumber).then((dialed) => dialed == true
                 ? Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const CallingScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => CallingScreen(caller: widget.userModel != null ? widget.userModel!.getFullName() : chat.phoneNumber)),
                   )
                 : null),
           ),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
-          Icon(Icons.search),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
-          Icon(Icons.more_vert)
+          // TODO const Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
+          // TODO const Icon(Icons.search),
+          // TODO const Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
+          // TODO const Icon(Icons.more_vert)
         ],
       ),
       body: Container(
@@ -104,7 +107,6 @@ class ChatWithScreenState extends State<ChatWithScreen> {
                 ),
               ),
               autofocus: true,
-              // focusNode: _focusnode,
               minLines: 1,
               maxLines: 3,
               controller: _newReplyController,
@@ -114,21 +116,5 @@ class ChatWithScreenState extends State<ChatWithScreen> {
         ),
       ),
     );
-  }
-
-  // TODO refactor duplicated code
-  Future<bool?> dialCustomer(String phoneNumber) async {
-    String tel = FormatterUtil.phoneNumberToIntlFormat(phoneNumber);
-    return TwilioVoice.instance.hasMicAccess().then((hasMicAccess) {
-      if (!hasMicAccess) {
-        TwilioVoice.instance.requestMicAccess().then((value) {
-          if (true == value) {
-            return TwilioVoice.instance.call.place(to: tel, from: '+32460230233');
-          }
-          return false;
-        });
-      }
-      return TwilioVoice.instance.call.place(to: tel, from: '+32460230233');
-    });
   }
 }

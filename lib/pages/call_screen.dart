@@ -83,7 +83,7 @@ class CallsScreenState extends State<CallsScreen> {
                     onTap: () => CallingScreen.dialCustomer(call.phoneNumber).then((dialed) => dialed == true
                         ? Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => CallingScreen(caller: displayName,)),
+                            MaterialPageRoute(builder: (context) => CallingScreen(caller: displayName)),
                           )
                         : null));
               }).toList(),

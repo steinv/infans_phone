@@ -25,7 +25,7 @@ class InfansPhoneAppHomeState extends State<InfansPhoneAppHome> with SingleTicke
   ];
 
   late TabController _tabController;
-  bool showFab = true;
+  DialAction? action = DialAction.chat;
 
   @override
   void initState() {
@@ -39,13 +39,14 @@ class InfansPhoneAppHomeState extends State<InfansPhoneAppHome> with SingleTicke
     _tabController = TabController(vsync: this, initialIndex: 0, length: tabs.length);
     _tabController.addListener(() {
       if (_tabController.index == 0) {
-        showFab = true;
+        action = DialAction.chat;
+      } else if (_tabController.index == 1) {
+        action = DialAction.call;
       } else {
-        showFab = false;
+        action = null;
       }
       setState(() {});
     });
-
   }
 
   registerTwilio() async {
@@ -74,23 +75,15 @@ class InfansPhoneAppHomeState extends State<InfansPhoneAppHome> with SingleTicke
           ContactScreen(),
         ],
       ),
-      floatingActionButton: showFab
+      floatingActionButton: action != null
           ? FloatingActionButton(
-        backgroundColor: Theme
-            .of(context)
-            .colorScheme
-            .secondary,
-        child: const Icon(
-          Icons.message,
-          color: Colors.white,
-        ),
-        onPressed: () =>
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const InputPhoneNumberScreen()),
-      ),
-    ): null
-    ,
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+              child: Icon(
+                action == DialAction.chat ? Icons.message: Icons.call,
+                color: Colors.white,
+              ),
+              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => InputPhoneNumberScreen(action: action!))))
+          : null,
     );
   }
 }

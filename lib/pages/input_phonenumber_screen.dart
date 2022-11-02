@@ -1,11 +1,9 @@
-import 'dart:convert';
-
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:infans_phone/pages/loading_widget.dart';
 
 import '../models/chat_model.dart';
 import '../models/user_model.dart';
+import '../util/firebase_users.dart';
 import '../util/formatter.dart';
 import 'chat_with_screen.dart';
 
@@ -15,7 +13,7 @@ class InputPhoneNumberScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: contacts(),
+        future: FirebaseUsers.instance.usersStream.first,
         builder: (BuildContext context, AsyncSnapshot<List<UserModel>> contactsSnapshot) {
           if (contactsSnapshot.hasData) {
             var contacts = contactsSnapshot.data!;
@@ -45,7 +43,9 @@ class InputPhoneNumberScreen extends StatelessWidget {
                         onPressed: () {
                           if (fieldTextEditingController.text.trim().isNotEmpty) {
                             var phoneNumber = FormatterUtil.phoneNumberToIntlFormat(fieldTextEditingController.text);
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => ChatWithScreen(ChatModel(phoneNumber, List.empty()))));
+                            var chat = ChatModel(phoneNumber, List.empty());
+                            var user = FirebaseUsers.getUserByPhoneNumber(contacts, phoneNumber);
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ChatWithScreen(chatModel: chat, userModel: user)));
                           }
                         },
                       ),
@@ -53,7 +53,9 @@ class InputPhoneNumberScreen extends StatelessWidget {
                   ),
                   onSelected: (UserModel selection) {
                     var phoneNumber = FormatterUtil.phoneNumberToIntlFormat(selection.phoneNumber!);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatWithScreen(ChatModel(phoneNumber, List.empty()))));
+                    var chat = ChatModel(phoneNumber, List.empty());
+                    var user = FirebaseUsers.getUserByPhoneNumber(contacts, phoneNumber);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatWithScreen(chatModel: chat, userModel: user)));
                   },
                   optionsViewBuilder: (BuildContext context, AutocompleteOnSelected<UserModel> onSelected, Iterable<UserModel> options) {
                     return Align(
@@ -90,21 +92,5 @@ class InputPhoneNumberScreen extends StatelessWidget {
             return const LoadingWidget();
           }
         });
-  }
-
-  Future<List<UserModel>> contacts() {
-    return FirebaseDatabase.instance.ref('users').get().then((event) {
-      if (event.value == null) {
-        return List.empty();
-      }
-      final data = jsonDecode(jsonEncode(event.value)) as Map;
-      List<UserModel> usersWithPhoneNumber = data.entries
-          .map((entry) => UserModel.fromJson(entry.key, entry.value))
-          .where((element) => element.phoneNumber != null && (element.name != null || element.surname != null))
-          .toList()
-          .cast<UserModel>();
-      usersWithPhoneNumber.sort((x, y) => x.getFullName().compareTo(y.getFullName()));
-      return usersWithPhoneNumber;
-    });
   }
 }

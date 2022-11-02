@@ -6,12 +6,15 @@ import 'package:infans_phone/pages/received_message_screen.dart';
 import 'package:infans_phone/pages/sent_message_screen.dart';
 import '../models/chat_model.dart';
 import '../models/message_model.dart';
+import '../models/user_model.dart';
 import '../util/messages_repository.dart';
+import 'calling_screen.dart';
 
 class ChatWithScreen extends StatefulWidget {
   final ChatModel chatModel;
+  final UserModel? userModel;
 
-  const ChatWithScreen(this.chatModel, {super.key});
+  const ChatWithScreen({super.key, required this.chatModel, this.userModel});
 
   @override
   State<StatefulWidget> createState() => ChatWithScreenState();
@@ -36,21 +39,32 @@ class ChatWithScreenState extends State<ChatWithScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ImageProvider avatar = widget.userModel != null ? widget.userModel!.profilePicture() : const AssetImage('assets/images/default-user.png');
+    String displayName = widget.userModel != null ? widget.userModel!.getFullName() : chat.phoneNumber;
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
         titleSpacing: 0,
         title: Row(children: <Widget>[
-          const CircleAvatar(backgroundImage: AssetImage('assets/images/default-user.png')),
+          CircleAvatar(backgroundImage: avatar),
           const Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
-          Text(chat.phoneNumber),
+          Text(displayName),
         ]),
-        actions: const <Widget>[
-          Icon(Icons.call),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
-          Icon(Icons.search),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
-          Icon(Icons.more_vert)
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.call),
+            onPressed: () => CallingScreen.dialCustomer(chat.phoneNumber).then((dialed) => dialed == true
+                ? Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CallingScreen(caller: widget.userModel != null ? widget.userModel!.getFullName() : chat.phoneNumber)),
+                  )
+                : null),
+          ),
+          // TODO const Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
+          // TODO const Icon(Icons.search),
+          // TODO const Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
+          // TODO const Icon(Icons.more_vert)
         ],
       ),
       body: Container(
@@ -93,7 +107,6 @@ class ChatWithScreenState extends State<ChatWithScreen> {
                 ),
               ),
               autofocus: true,
-              // focusNode: _focusnode,
               minLines: 1,
               maxLines: 3,
               controller: _newReplyController,
